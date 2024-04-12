@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using UrlShortener.Api.Data;
 using UrlShortener.Api.Services;
 using UrlShortener.Api.Settings;
@@ -38,6 +39,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(policy =>
+    policy.WithOrigins("http://localhost:7142", "https://localhost:7142")
+    .AllowAnyMethod()
+    .WithHeaders(HeaderNames.ContentType)
+    );
 
 app.MapControllers();
 

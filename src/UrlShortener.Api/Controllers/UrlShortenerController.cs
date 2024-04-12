@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UrlShortener.Domain.Services.Interfaces;
+using UrlShortener.Shared.Models;
 
 namespace UrlShortener.Api.Controllers;
+
+[Route("/api/url-shortener")]
 public class UrlShortenerController : Controller
 {
     private readonly IUrlShortenerService _urlShortenerService;
@@ -12,10 +15,11 @@ public class UrlShortenerController : Controller
         _urlShortenerService = urlShortenerService;
     }
 
-    [HttpPost, Route("/")]
+    [HttpPost]
     public IActionResult Index(
-        [FromBody] string url)
+        [FromBody] UrlShortenRequest request)
     {
+        var url = request.Url;
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
         {
             return BadRequest("Not a valid URL");
@@ -28,10 +32,15 @@ public class UrlShortenerController : Controller
             return BadRequest(url);
         }
 
-        return Ok(result);
+        var response = new UrlShortenResponse
+        {
+            ShortUrl = result,
+        };
+
+        return Ok(response);
     }
 
-    [HttpGet, Route("/{token}")]
+    [HttpGet, Route("{token}")]
     public IActionResult Redirect(
         [FromRoute] string token)
     {

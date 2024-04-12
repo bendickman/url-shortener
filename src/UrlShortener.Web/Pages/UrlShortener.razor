@@ -1,0 +1,20 @@
+﻿@inherits UrlShortenerBase
+
+<h3>Url Shortener</h3>
+
+<input @bind="originalUrl" />
+<button class="btn btn-primary" @onclick="() => SetShortenedUrl()">Generate</button>
+@if (!string.IsNullOrEmpty(shortenedUrl))
+{
+    <div class="alert alert-info">@shortenedUrl</div>
+}
+
+@code {
+    private string originalUrl = string.Empty;
+    private string shortenedUrl = string.Empty;
+
+    private async Task SetShortenedUrl()
+    {
+        shortenedUrl = await UrlShortenerService.GetShortenedUrlAsync(originalUrl);
+    }
+}
